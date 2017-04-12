@@ -1,0 +1,141 @@
+{% from lib import config %}
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="http://v3.bootcss.com/docs-assets/ico/favicon.png">
+    <title>{{ config.title }}</title>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/navbar-fixed-top.css" rel="stylesheet">
+    <script language="javascript">
+        function groupshow() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.get("/admin/showgroup/", function(result){$("#BODY").html(result);});
+                          }
+        function adminshow() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.get("/admin/show/", function(result){$("#BODY").html(result);});
+                          }
+        function svnlog() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.get("/svnlog/?limit=", function(result){$("#BODY").html(result);});
+                          }
+        function svnget(mm) { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.ajax({
+                     url: "/svn/?limit=10&args=" + mm, 
+                     success: function(result){$("#BODY").html(result);},
+                  });
+                          }
+        function javasync() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.ajax({
+                     url: "/javasync/", 
+                     success: function(result){$("#BODY").html(result);},
+                  });
+                          }
+        function log() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.ajax({
+                     url: "/log/", 
+                     success: function(result){$("#BODY").html(result);},
+                  });
+                          }
+        function svnpost(mm) {
+            $.post("/svn/?args=" + mm, $("#svnform").serialize(), function(result){alert(result)});
+                           }
+        function mysqlget() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.ajax({
+                     url: "/mysql/", 
+                     success: function(result){
+                        $("#BODY").html(result);
+                    },
+                  });
+                          }
+        function mysqluserinfo() { 
+            document.getElementById("BODY").innerHTML = "加载中...";
+            $.ajax({
+                     url: "/userinfo/show/", 
+                     success: function(result){$("#BODY").html(result);
+                    },
+                  });
+                          }
+    </script>
+  </head>
+
+  <body>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand">{{ config.title }}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li ><a href="">概括</a></li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown">工具<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="javascript:void(0);" onclick="svnget('app')">SVN管理(APP)</a></li>
+                <li><a href="javascript:void(0);" onclick="svnget('cms')">SVN管理(CMS)</a></li>
+                <li><a href="javascript:void(0);" onclick="svnget('bbs')">SVN管理(BBS)</a></li>
+                <li><a href="javascript:void(0);">---------------</a></li>
+                <li><a href="javascript:void(0);" onclick="javasync()">JavaSync管理</a></li>
+                <li><a href="javascript:void(0);">---------------</a></li>
+                <!--li><a href="javascript:void(0);" onclick="log()">日志跟踪</a></li-->
+              </ul>
+            </li>
+
+            <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown">MySQL管理<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li><a href="javascript:void(0);" onclick="mysqlget()">数据表上线</a></li>
+                <li><a href="javascript:void(0);" onclick="mysqluserinfo()">MySQL任务列表</a></li>
+            </ul>
+            </li>
+          </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+            <a href="" class="dropdown-toggle" data-toggle="dropdown">{{ current_user }}<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li class=""><a href="/logout/">登出</a></li>
+                <!--li><a href="javascript:void(0);" onclick="log()">日志跟踪</a></li-->
+                {% if username == "admin" %}
+                <li class="divider"></li>
+                <li><a href="javascript:void(0);" onclick="groupshow()">组管理</a></li>
+                <li><a href="javascript:void(0);" onclick="adminshow()">用户管理</a></li>
+                {% end %}
+            </ul>
+            </li>
+            </ul>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="BODY" class="container">
+    </div>
+
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/ajaxfileupload.js"></script>
+    <!--<script>
+      $(document).ready(function(){
+        $("#BODY").delegate("input[name='sync']","click",function(){
+              $.post("/userinfo/updatemysql/",
+                  {
+                  logid:logid,
+                  username:username
+                  },
+                  function(result){$("#BODY").html(result);}
+              );
+          })
+      });
+    </script>-->
+  </body>
+</html>

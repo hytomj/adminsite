@@ -1,0 +1,62 @@
+{% from lib.util import enu %}
+<table class="table table-condensed">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>用户名</th>
+    <th>密码</th>
+    <th>创建时间</th>
+    <th>所属组</th>
+    <th>登录</th>
+    <th>ftp</th>
+    <th>操作</th>
+  </tr>
+</thead>
+<tbody>
+{% for x, y in enu(userinfo, 1) %}
+    <tr form="true" id="userid{{ y["userid"] }}" name="userid{{ y["userid"] }}">
+      <td><label                 type="text"     class="form-control">{{ x }}</label></td>
+      <td><label name="username" type="text"     class="form-control">{{ y["username"] }}</label></td>
+      <td><input name="password" type="password" class="form-control" value={{ y["password"] }}></td>
+      <td><label                 type="datetime" class="form-control">{{ y["createtime"] }}</label></td>
+      <td>
+        <select id="groupid_{{ y["userid"] }}" class="form-control">
+          <option value=""}}>-</option>
+          {% for xx in handler.db.findGroup() %}
+          <option value={{ xx["groupid"] }} {% if y["groupid"] == xx["groupid"] %} selected="selected" {% end %}>{{ xx["groupname"] }}</option>
+          {% end %}
+        </select>
+      </td>
+      <td>
+        <input name="status" id="status_{{ y["userid"] }}" type="checkbox" {% if y["status"] %}checked="checked"{% end %} >
+      </td>
+      <td>
+        <input name="status" id="ftpstatus_{{ y["userid"] }}" type="checkbox" {% if y["ftpstatus"] %}checked="checked"{% end %} >
+      </td>
+      <td>
+      <input type="submit"   class="btn btn-success"  onClick="postuserid{{ y["userid"] }}()" value="更新">
+      <input type="submit"   class="btn btn-danger"  onClick="postuseriddel{{ y["userid"] }}()" value="删除">
+      </td>
+  </tr>
+{% end %}
+</tbody>
+</table>
+
+<script>
+{% for x, y in enu(userinfo, 1) %}
+function postuserid{{ y["userid"] }}() {
+    var aa = $("#userid{{ y["userid"] }}").find("input").get();
+    var username = "{{ y["username"] }}";
+    var password = aa[0].value;
+    var group1   = $("#groupid_{{ y["userid"] }}").find("option:selected").val();
+    var status1  = $("#status_{{ y["userid"] }}").is(":checked");
+    var status2  = $("#ftpstatus_{{ y["userid"] }}").is(":checked");
+    $.get("/admin/update/?" + "username=" + username + "&password=" + password + "&status=" + status1 + "&ftpstatus=" + status2 + "&groupid=" + group1,
+           function(result){$("#BODY").html(result);});
+                   }
+function postuseriddel{{ y["userid"] }}() {
+    $.get("/admin/deluser/?&userid={{ y["userid"] }}",
+           function(result){$("#BODY").html(result);});
+                   }
+{% end %}
+</script>

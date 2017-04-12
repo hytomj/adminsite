@@ -1,0 +1,60 @@
+{% from lib.util import enu %}
+<table class="table table-condensed">
+<thead>
+  <tr>
+    <th>#</th>
+    <th>组名</th>
+    <th>创建时间</th>
+    <th>状态</th>
+    <th>操作</th>
+  </tr>
+</thead>
+<tbody>
+{% for x, y in enu(userinfo, 1) %}
+    <tr form="true" id="groupid{{ y["groupid"] }}" name="groupid{{ y["groupid"] }}">
+      <td><label id="groupid_{{ y["groupid"] }}"  type="text"     class="form-control">{{ x }}</label></td>
+      <td><input                  type="text"     class="form-control" value={{ y["groupname"] }}></td>
+      <td><label                  type="datetime" class="form-control">{{ y["createtime"] }}</label></td>
+      <td>
+        <input     id="status_{{ y["groupid"] }}"  type="checkbox" {% if y["status"] %}checked="checked"{% end %} >
+      </td>
+      <td>
+      <input type="submit"   class="btn btn-success"  onClick="postgroupid{{ y["groupid"] }}()" value="更新">
+      <input type="submit"   class="btn btn-danger"   onClick="postgroupiddel{{ y["groupid"] }}()" value="删除">
+      </td>
+  </tr>
+{% end %}
+    <tr form="true" id="groupidadd" name="groupidadd">
+      <td><label                  type="text"     class="form-control">{{ len(userinfo) + 1 }}</label></td>
+      <td><input name="groupname" type="text"     class="form-control"></td>
+      <td><label                  type="datetime" class="form-control"></label></td>
+      <td>
+        <input name="status" id="statusadd" type="checkbox" checked="checked" >
+      </td>
+      <td>
+      <input type="submit"   class="btn btn-success"  onClick="postgroupidadd()" value="添加">
+      </td>
+</tbody>
+</table>
+
+<script>
+{% for x, y in enu(userinfo, 1) %}
+function postgroupid{{ y["groupid"] }}() {
+    var status1   = $("#status_{{ y["groupid"] }}").is(":checked");
+    $.get("/admin/setgroup/?groupname={{ y["groupname"] }}&status=" + status1 + "&groupid={{ y["groupid"] }}",
+           function(result){$("#BODY").html(result);});
+                   }
+function postgroupiddel{{ y["groupid"] }}() {
+    $.get("/admin/delgroup/?&groupid={{ y["groupid"] }}",
+           function(result){$("#BODY").html(result);});
+                   }
+{% end %}
+function postgroupidadd() {
+    var aa = $("#groupidadd").find("input").get();
+    var groupname = aa[0].value
+    var status1  = $("#statusadd").is(":checked");
+    $.get("/admin/updategroup/?" + "groupname=" + groupname + "&status=" + status1,
+           function(result){$("#BODY").html(result);});
+                   }
+
+</script>

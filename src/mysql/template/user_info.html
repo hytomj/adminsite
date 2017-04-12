@@ -1,0 +1,79 @@
+
+  <table id="DATA" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>任务ID</th>
+        <th>用户</th>
+        <th>时间</th>
+        <th>数据库名</th>
+        <th width="500">摘要</th>
+        <th>状态</th>
+        {% if current_user == "admin" %}
+        <th>操作</th>
+        {% end %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in result %}
+      <tr>
+        <td><label id="logid" name="logid" type="text">{{ i['logid'] }}</label></td>
+        <td><label id="username" name="username" type="text">{{ i['username'] }}</label></td>
+        <td>{{ i['createtime'] }}</td>
+        <td>{{ i['dbname'] }}</td>
+        <td>{{ i['msg'] }}</td>
+        {% if i['status'] == 0 %}
+        <td>等待审核</td>
+        {% else %}
+        <td>上线成功</td>
+        {% end %}
+        {% if current_user == "admin" %}
+        <td>
+        {% if i['status'] == 0 %}
+        <input id="test" name="sync" type="submit" class="btn btn-danger" value="同步" />
+         {% else %}
+         <input id="test" name="sync" type="submit" class="btn btn-danger" disabled="disabled" value="同步" />
+         {% end %}
+        </td>
+        {% end %}
+      </tr>
+    {% end %}
+    </tbody>
+  </table>
+
+
+
+
+<!--
+<input type="submit" class="btn btn-danger" onclick="mysqlsync{{ i["logid"] }}()" value="同步" />
+<script type="text/javascript">
+{% for i in result %}
+function mysqlsync{{ i["logid"] }}() {
+    $.get("/userinfo/updatemysql/?&logid={{ i["logid"] }}",
+           function(result){$("#BODY").html(result);});
+                   }
+{% end %}
+</script>
+
+-->
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $("input[name='sync']").bind("click",function(){
+        var logid = $(this).closest("tr").find("td").eq(0).text();
+        var username = $(this).closest("tr").find("td").eq(1).text();
+        var _this = $(this);
+        $.post("/userinfo/updatemysql/",
+            {
+            logid:logid,
+            username:username
+            },
+            function(result){
+                // var msg = result?"上线成功":"上线失败";
+                $(_this).closest("tr").find("td").eq(5).text(result);
+                if(result =="上线成功")
+                    $(_this).attr("disabled","disabled");
+            }
+        );
+    });
+});
+</script>

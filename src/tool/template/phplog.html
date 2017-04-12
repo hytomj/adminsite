@@ -1,0 +1,82 @@
+
+<div class="tabbable tabs-left">
+  <ul class="nav nav-tabs" id="listt">
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="lA">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>服务器</th>
+            <th>内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>  
+    var wsUri ="ws://10.18.1.31:8888/ws?waiter=1";
+    if (typeof(websocket) == "undefined") {
+        websocket = new WebSocket(wsUri); 
+    } else {
+        doSend("start");
+    };
+    websocket.onopen = function(evt) { 
+        onOpen(evt) 
+    }; 
+    websocket.onclose = function(evt) { 
+        onClose(evt) 
+    }; 
+    websocket.onmessage = function(evt) { 
+        onMessage(evt) 
+    }; 
+    websocket.onerror = function(evt) { 
+        onError(evt) 
+    }; 
+  
+    function onOpen(evt) { 
+    };  
+  
+    function onClose(evt) { 
+        websocket.close(); 
+    };  
+  
+    function onMessage(evt) {
+        if (evt.data == "HelloOk") {
+            return;
+        };
+        if (evt.data.indexOf("FFF!!!") >-1) {
+            var daa1 = evt.data.replace("FFF!!!", "").split("\n");
+            var xx1 = '';
+            for (var i = 0; i < daa1.length; i++) {
+                xx1 += '<li class=""><a onclick="testFun(\'' + daa1[i] + '\')" data-toggle="tab">' + daa1[i] + '</a></li>';
+            }
+            $('#listt').prepend(xx1);
+            return;
+        };
+        var da1 = evt.data.replace(/#012/g, "<br>").split(" || ");
+        var host1 = da1[0];
+        var msg1  = da1[1];
+        var html1 = '';
+        html1 += ' <tr class="active" id="tbodylog"> <td>' + host1 + '</td><td>' + msg1 + '</td></tr>';
+        $('tbody').prepend(html1);
+    };  
+  
+    function onError(evt) { 
+    } ; 
+  
+    function doSend(message) { 
+        websocket.send(message);
+    };
+
+    function testFun(m) {
+        doSend(m);
+    };
+  
+</script> 
+ 

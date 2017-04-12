@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+<table id="DATA" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>时间</th>
+        <th>用户</th>
+        <th>版本</th>
+        <th>变更</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for x, y in enu(svnLogInfo, 1) %}
+      <tr>
+        <td>{{ x }}</td>
+        <td>{{ sec2str(y["date"]) }}</td>
+        <td>{{ y["author"] }}</td>
+        <td>{{ y["revision"] }}</td>
+        <td>
+            {% for z in y["changed"] %}
+            {{ z }} <input type="checkbox" name="filepath" value="{{ svnPathSplit(z) }}"><br>
+            {% end %}
+        </td>
+      </tr>
+      {% end %}
+    </tbody>
+</table>
+{% end %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block body %}
+<table id="DATA" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>时间</th>
+        <th>用户</th>
+        <th>变更</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for x, y in enu(logs, 1) %}
+      <tr>
+        <td>{{ x }}</td>
+        <td>{{ y["createtime"] }}</td>
+        {% if current_user != "admin" %}
+        <td>{{ current_user }}</td>
+        {% else %}
+        <td>{{ handler.db.getUsername(y["userid"]) }}</td>
+        {% end %}
+        <td>
+            {% for z in y["msg"].split("\n") %}
+            {{ z }}<br>
+            {% end %}
+        </td>
+      </tr>
+      {% end %}
+    </tbody>
+</table>
+{% end %}

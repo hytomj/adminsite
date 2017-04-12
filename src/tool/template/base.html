@@ -1,0 +1,40 @@
+{% from lib.util import svnPathSplit, sec2str, enu %}
+        {% if "/svnlog/" in request.uri %}
+        {% set x = "返回" %}  
+        {% else %}
+        {% set x = "刷新" %}  
+        {% end %}
+        <div class="row">
+          <div class="col-xs-2">
+            <div class="input-group">
+              <input id="svnlimitid" name="svnlimitid" type="text" class="form-control" placeholder="最近版本数">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" onclick="svnget2('{{ args }}')">{{ x }}</button>
+              </span>
+            </div>
+          </div>
+          <input class="btn btn-default" onclick="svnlog()" type="button" value="历史">
+          {% if not "/svnlog/" in request.uri %}
+          <input class="btn btn-default" onclick="svnpost('{{ args }}')" type="button" value="提交">
+          {% end %}
+        </div>
+        <div id="DATA" class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">
+              功能: php开发组成员在此页面上选择已经在dd环境中测试通过的文件提交到线上。
+          </div>
+      <form id="svnform" name="svnform">
+          {% block body %}{% end %}
+      </form>
+
+<script>
+function svnget2(mm){
+  sli = $('#svnlimitid').val();
+  document.getElementById("BODY").innerHTML = "加载中...";
+  $.ajax({
+    url: "/svn/?limit=" + sli + "&args=" + mm, 
+    success: function(result){$("#BODY").html(result);},
+  })
+  
+}
+</script>

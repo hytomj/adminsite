@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-xs-4">
+      <form id="form1" enctype="multipart/form-data" method="post">
+              <input id="dbname" class="form-control" type="text" name="dbname"  placeholder="填写数据库名称,如u17">
+              <textarea id="myfile" class="form-control" type="text" name="myfile" rows="10" cols="50" placeholder="请填入提交的SQL"></textarea><br>
+              <!--<input id="myfile" class="file" type="file" name="myfile" placeholder="请填入提交的SQL"><br>
+              <input id="myfile" class="form-control container" type="file" name="myfile" placeholder="请填入提交的SQL"><br>-->
+              <!--<input id="q" class="btn btn-default" type="button" value="提交" />-->
+              <input class="btn btn-default" onclick="subForm()" type="button" value="提交">
+      </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function subForm(){
+        // var formParam = $("#form1").serialize();
+        // var a = formParam.replace(/\&/g,"\",\"").replace(/=/g,"\":\"");
+        // postData = JSON.parse("{\""+a+"\"}");
+        // $.ajaxFileUpload({  
+        //             url:"/mysql/",  
+        //             secureuri:false,
+        //             data:postData,
+        //             //fileElementId: "myfile",  
+        //             timeout:20000,
+        //             dataType: "JSON", //注意这里要大写
+        //             success: function (data, textStatus) 
+        //             {  
+        //                 alert(data);
+        //                 $("textarea,input[type='text']").val("");
+        //             },
+        //             error: function (data, status, e)//服务器响应失败处理函数
+        //             {
+        //                 alert(123);
+        //             }
+        //           }); 
+        $.ajax({
+          type:"post",
+          url:'/mysql/',
+          data:{dbname:$("#dbname").val(),myfile:$("#myfile").val()},
+          timeout:20000,
+          dataType: "HTML",
+          success: function (data, textStatus){
+              alert(data);
+              $("textarea,input[type='text']").val("");
+          }
+        })
+    }
+</script>
